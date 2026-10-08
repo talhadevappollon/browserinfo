@@ -1,0 +1,1718 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BrowserLens | Client & Browser Inspector</title>
+  <meta name="description" content="Comprehensive real-time browser, hardware, network, and client environment diagnostic tool.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+/* ==========================================================================
+   BrowserLens Design System & Styles
+   Modern Dark Cyber-Luxury Aesthetic
+   ========================================================================== */
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, Monaco, Consolas, monospace;
+
+  /* Color Palette */
+  --bg-primary: #070a12;
+  --bg-secondary: #0d121f;
+  --bg-card: rgba(16, 23, 38, 0.75);
+  --bg-card-hover: rgba(22, 31, 51, 0.85);
+  --bg-input: rgba(11, 16, 28, 0.8);
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-focus: rgba(99, 102, 241, 0.5);
+
+  --accent-primary: #6366f1;
+  --accent-primary-hover: #4f46e5;
+  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  --accent-cyan: #06b6d4;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-purple: #a855f7;
+  --accent-rose: #f43f5e;
+
+  /* Text Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-code: #38bdf8;
+
+  /* Status Tokens */
+  --status-yes-bg: rgba(16, 185, 129, 0.12);
+  --status-yes-text: #34d399;
+  --status-yes-border: rgba(16, 185, 129, 0.25);
+
+  --status-no-bg: rgba(244, 63, 94, 0.12);
+  --status-no-text: #fb7185;
+  --status-no-border: rgba(244, 63, 94, 0.25);
+
+  --status-warn-bg: rgba(245, 158, 11, 0.12);
+  --status-warn-text: #fbbf24;
+  --status-warn-border: rgba(245, 158, 11, 0.25);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px -6px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 36px -8px rgba(0, 0, 0, 0.6);
+  --glow-indigo: 0 0 30px -5px rgba(99, 102, 241, 0.25);
+}
+
+/* Base Reset & Box Sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ambient Background Lights */
+.ambient-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(140px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.45;
+}
+
+.glow-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #4338ca 0%, transparent 70%);
+  top: -150px;
+  left: 10%;
+}
+
+.glow-2 {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, #0e7490 0%, transparent 70%);
+  top: 30%;
+  right: -200px;
+}
+
+.glow-3 {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, #581c87 0%, transparent 70%);
+  bottom: 5%;
+  left: -100px;
+}
+
+/* App Container */
+.app-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Typography Utilities */
+.font-mono {
+  font-family: var(--font-mono) !important;
+}
+
+/* Top Header */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--accent-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.45);
+  flex-shrink: 0;
+}
+
+.brand-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+}
+
+.live-badge {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #34d399;
+  box-shadow: 0 0 8px #34d399;
+  animation: pulseAnimation 2s infinite ease-in-out;
+}
+
+@keyframes pulseAnimation {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 12px #34d399; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+/* Header Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box svg {
+  position: absolute;
+  left: 0.85rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-box input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 2.2rem 0.6rem 2.4rem;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  outline: none;
+  width: 230px;
+  transition: all 0.2s ease;
+}
+
+.search-box input:focus {
+  width: 270px;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  background: rgba(15, 23, 42, 0.95);
+}
+
+.btn-clear {
+  position: absolute;
+  right: 0.6rem;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.btn-clear.hidden {
+  display: none;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: var(--font-sans);
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.btn-icon:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--accent-cyan);
+  transform: rotate(45deg);
+}
+
+.btn-xs {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: 6px;
+}
+
+.btn-xs:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+}
+
+/* Hero KPI Grid */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.kpi-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.35rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+.kpi-card:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(99, 102, 241, 0.35);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md), var(--glow-indigo);
+}
+
+.kpi-card:hover::before {
+  background: var(--accent-gradient);
+}
+
+.kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kpi-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.kpi-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-indigo { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+.icon-cyan { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
+.icon-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+.icon-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+
+.kpi-value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.kpi-sub {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Raw User Agent Banner */
+.ua-banner {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.ua-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ua-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ua-content {
+  font-size: 0.825rem;
+  color: var(--text-code);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  word-break: break-all;
+  line-height: 1.45;
+  user-select: all;
+}
+
+/* Category Filter Tabs */
+.category-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+  scrollbar-width: thin;
+}
+
+.category-tabs::-webkit-scrollbar {
+  height: 4px;
+}
+
+.category-tabs::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.tab-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 0.55rem 1.1rem;
+  font-size: 0.825rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  font-family: var(--font-sans);
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.tab-btn.active {
+  background: var(--accent-primary);
+  color: #ffffff;
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+}
+
+/* Detail Sections Grid */
+.sections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 500px) {
+  .sections-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.spec-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.spec-card:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: var(--shadow-sm);
+}
+
+.spec-card.hidden {
+  display: none !important;
+}
+
+.spec-card-header {
+  padding: 1.1rem 1.4rem;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.spec-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.spec-card-count {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* Spec Rows List */
+.spec-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.spec-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  gap: 1rem;
+  transition: background 0.15s ease;
+}
+
+.spec-row:last-child {
+  border-bottom: none;
+}
+
+.spec-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.spec-row.hidden {
+  display: none !important;
+}
+
+.spec-key {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 140px;
+}
+
+.spec-desc {
+  font-size: 0.725rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.spec-val-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: right;
+  justify-content: flex-end;
+  max-width: 65%;
+}
+
+.spec-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.spec-value.is-mono {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: #e2e8f0;
+}
+
+/* Status Badges */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.status-pill.yes {
+  background: var(--status-yes-bg);
+  color: var(--status-yes-text);
+  border: 1px solid var(--status-yes-border);
+}
+
+.status-pill.no {
+  background: var(--status-no-bg);
+  color: var(--status-no-text);
+  border: 1px solid var(--status-no-border);
+}
+
+.status-pill.warn {
+  background: var(--status-warn-bg);
+  color: var(--status-warn-text);
+  border: 1px solid var(--status-warn-border);
+}
+
+/* Empty State */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-lg);
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.empty-state svg {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+/* Footer */
+.app-footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 0 20px rgba(99, 102, 241, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast.hidden {
+  transform: translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toast-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--status-yes-bg);
+  color: var(--status-yes-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 1.25rem 1rem 2rem;
+    gap: 1.5rem;
+  }
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .header-actions {
+    justify-content: stretch;
+  }
+  .search-box {
+    width: 100%;
+  }
+  .search-box input {
+    width: 100% !important;
+  }
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+</style>
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- Main Container -->
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title-wrap">
+            <h1 class="brand-title">BrowserLens</h1>
+            <span class="badge live-badge"><span class="pulse-dot"></span> Live Audit</span>
+          </div>
+          <p class="brand-subtitle">Real-time client environment, hardware & browser diagnostics</p>
+        </div>
+      </div>
+
+      <!-- Action Toolbar -->
+      <div class="header-actions">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="property-search" placeholder="Filter specifications..." autocomplete="off">
+          <button id="search-clear" class="btn-clear hidden" aria-label="Clear filter">&times;</button>
+        </div>
+        <button id="btn-copy-json" class="btn btn-secondary" title="Copy all detected specs as JSON">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copy JSON</span>
+        </button>
+        <button id="btn-export-json" class="btn btn-primary" title="Download report as JSON file">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Export Report</span>
+        </button>
+        <button id="btn-refresh" class="btn btn-icon" title="Refresh detection">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero KPI Cards -->
+    <section class="kpi-grid">
+      <!-- Browser Card -->
+      <div class="kpi-card" id="kpi-browser">
+        <div class="kpi-header">
+          <span class="kpi-label">Browser & Engine</span>
+          <div class="kpi-icon icon-indigo">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-value" id="kpi-browser-name">Detecting...</div>
+        <div class="kpi-sub" id="kpi-browser-engine">Engine: Analyzing</div>
+      </div>
+
+      <!-- OS & Platform Card -->
+      <div class="kpi-card" id="kpi-os">
+        <div class="kpi-header">
+          <span class="kpi-label">Operating System</span>
+          <div class="kpi-icon icon-cyan">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-value" id="kpi-os-name">Detecting...</div>
+        <div class="kpi-sub" id="kpi-os-platform">Platform: Analyzing</div>
+      </div>
+
+      <!-- Screen & Viewport Card -->
+      <div class="kpi-card" id="kpi-screen">
+        <div class="kpi-header">
+          <span class="kpi-label">Display & Viewport</span>
+          <div class="kpi-icon icon-emerald">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-value" id="kpi-screen-res">0 &times; 0</div>
+        <div class="kpi-sub" id="kpi-screen-viewport">Viewport: 0 &times; 0 (1x)</div>
+      </div>
+
+      <!-- Public IP & Network Card -->
+      <div class="kpi-card" id="kpi-network">
+        <div class="kpi-header">
+          <span class="kpi-label">Public IP & Origin</span>
+          <div class="kpi-icon icon-purple">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+              <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+              <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+              <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+              <line x1="12" y1="20" x2="12.01" y2="20"></line>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-value font-mono" id="kpi-public-ip">Resolving IP...</div>
+        <div class="kpi-sub" id="kpi-ip-geo">Location & ISP lookup</div>
+      </div>
+    </section>
+
+    <!-- Raw User Agent Banner -->
+    <div class="ua-banner">
+      <div class="ua-header">
+        <span class="ua-title">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+          </svg>
+          Full User-Agent String
+        </span>
+        <button id="btn-copy-ua" class="btn btn-xs" title="Copy User Agent to clipboard">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copy</span>
+        </button>
+      </div>
+      <div class="ua-content font-mono" id="raw-user-agent">Loading user agent...</div>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <nav class="category-tabs" id="category-tabs">
+      <button class="tab-btn active" data-category="all">All Specs</button>
+      <button class="tab-btn" data-category="browser">Browser & Client Hints</button>
+      <button class="tab-btn" data-category="screen">Screen & Rendering</button>
+      <button class="tab-btn" data-category="hardware">Hardware & GPU</button>
+      <button class="tab-btn" data-category="network">Network & Connection</button>
+      <button class="tab-btn" data-category="locale">Locale & Timezone</button>
+      <button class="tab-btn" data-category="storage">Storage & Security</button>
+      <button class="tab-btn" data-category="media">Media & APIs</button>
+      <button class="tab-btn" data-category="fingerprint">Identity Fingerprint</button>
+    </nav>
+
+    <!-- Specifications Detail Grid -->
+    <main class="sections-grid" id="sections-container">
+      <!-- Section cards will be dynamically mounted or populated here -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span>BrowserLens Inspector</span> &bull; 
+        <span>Client-side inspection &bull; No sensitive logs stored</span>
+      </div>
+      <div class="footer-right">
+        <span id="footer-timestamp">Inspected at: --</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden">
+    <div class="toast-icon">
+      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+    <span id="toast-message">Copied to clipboard!</span>
+  </div>
+
+  <script>
+/**
+ * BrowserLens - Client & Browser Environment Diagnostic Engine
+ * Pure Vanilla JavaScript
+ */
+
+(function () {
+  'use strict';
+
+  // Comprehensive diagnostics store
+  let diagnosticData = {};
+
+  // DOM Elements
+  const searchInput = document.getElementById('property-search');
+  const searchClearBtn = document.getElementById('search-clear');
+  const sectionsContainer = document.getElementById('sections-container');
+  const categoryTabs = document.getElementById('category-tabs');
+  const toast = document.getElementById('toast');
+  const toastMsg = document.getElementById('toast-message');
+
+  // KPI Elements
+  const kpiBrowserName = document.getElementById('kpi-browser-name');
+  const kpiBrowserEngine = document.getElementById('kpi-browser-engine');
+  const kpiOsName = document.getElementById('kpi-os-name');
+  const kpiOsPlatform = document.getElementById('kpi-os-platform');
+  const kpiScreenRes = document.getElementById('kpi-screen-res');
+  const kpiScreenViewport = document.getElementById('kpi-screen-viewport');
+  const kpiPublicIp = document.getElementById('kpi-public-ip');
+  const kpiIpGeo = document.getElementById('kpi-ip-geo');
+  const rawUserAgentEl = document.getElementById('raw-user-agent');
+  const footerTimestamp = document.getElementById('footer-timestamp');
+
+  // Action Buttons
+  const btnCopyJson = document.getElementById('btn-copy-json');
+  const btnExportJson = document.getElementById('btn-export-json');
+  const btnRefresh = document.getElementById('btn-refresh');
+  const btnCopyUa = document.getElementById('btn-copy-ua');
+
+  // Active category filter
+  let activeCategory = 'all';
+
+  // Helper: Toast Message
+  function showToast(message) {
+    if (!toast) return;
+    toastMsg.textContent = message;
+    toast.classList.remove('hidden');
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => {
+      toast.classList.add('hidden');
+    }, 2400);
+  }
+
+  // Helper: Copy to Clipboard
+  async function copyToClipboard(text, successMsg = 'Copied to clipboard!') {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      showToast(successMsg);
+    } catch (err) {
+      showToast('Could not copy to clipboard');
+    }
+  }
+
+  // 1. Browser & Engine Parser
+  function parseBrowserInfo() {
+    const ua = navigator.userAgent;
+    let name = 'Unknown Browser';
+    let version = 'Unknown';
+    let engine = 'Unknown';
+
+    if (ua.includes('Edg/')) {
+      name = 'Microsoft Edge';
+      version = ua.match(/Edg\/([\d.]+)/)?.[1] || '';
+      engine = 'Blink';
+    } else if (ua.includes('OPR/') || ua.includes('Opera/')) {
+      name = 'Opera';
+      version = ua.match(/(?:OPR|Opera)\/([\d.]+)/)?.[1] || '';
+      engine = 'Blink';
+    } else if (ua.includes('Brave')) {
+      name = 'Brave';
+      version = ua.match(/Chrome\/([\d.]+)/)?.[1] || '';
+      engine = 'Blink';
+    } else if (ua.includes('Chrome/')) {
+      name = 'Google Chrome';
+      version = ua.match(/Chrome\/([\d.]+)/)?.[1] || '';
+      engine = 'Blink';
+    } else if (ua.includes('Firefox/')) {
+      name = 'Mozilla Firefox';
+      version = ua.match(/Firefox\/([\d.]+)/)?.[1] || '';
+      engine = 'Gecko';
+    } else if (ua.includes('Safari/') && !ua.includes('Chrome/')) {
+      name = 'Apple Safari';
+      version = ua.match(/Version\/([\d.]+)/)?.[1] || '';
+      engine = 'WebKit';
+    }
+
+    return { name, version, engine };
+  }
+
+  // 2. OS & Architecture Parser
+  function parseOSInfo() {
+    const ua = navigator.userAgent;
+    let os = 'Unknown OS';
+    let arch = 'Unknown';
+
+    if (/Windows NT 10.0/i.test(ua)) os = 'Windows 10 / 11';
+    else if (/Windows NT 6.3/i.test(ua)) os = 'Windows 8.1';
+    else if (/Windows NT 6.2/i.test(ua)) os = 'Windows 8';
+    else if (/Windows NT 6.1/i.test(ua)) os = 'Windows 7';
+    else if (/Mac OS X ([\d_]+)/i.test(ua)) os = 'macOS ' + (ua.match(/Mac OS X ([\d_]+)/)?.[1]?.replace(/_/g, '.') || '');
+    else if (/Android ([\d.]+)/i.test(ua)) os = 'Android ' + (ua.match(/Android ([\d.]+)/)?.[1] || '');
+    else if (/iPhone|iPad|iPod/i.test(ua)) os = 'iOS';
+    else if (/Linux/i.test(ua)) os = 'Linux';
+    else if (/CrOS/i.test(ua)) os = 'Chrome OS';
+
+    if (/Win64|x64|x86_64|amd64|WOW64/i.test(ua)) arch = '64-bit';
+    else if (/arm64|aarch64/i.test(ua)) arch = 'ARM 64-bit';
+    else if (/arm/i.test(ua)) arch = 'ARM';
+    else arch = '32-bit';
+
+    return { os, arch };
+  }
+
+  // 3. WebGL GPU Extraction
+  function getGpuInfo() {
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (!gl) return { vendor: 'WebGL not supported', renderer: 'WebGL not supported', maxTexture: 'N/A' };
+
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+      const vendor = debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
+      const renderer = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+      const maxTexture = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+
+      return {
+        vendor: vendor || 'Unknown Vendor',
+        renderer: renderer || 'Unknown GPU Renderer',
+        maxTexture: maxTexture ? `${maxTexture} x ${maxTexture}` : 'Unknown'
+      };
+    } catch (e) {
+      return { vendor: 'Unavailable', renderer: 'Unavailable', maxTexture: 'N/A' };
+    }
+  }
+
+  // 4. Non-invasive Canvas Hash (Fingerprint demo)
+  function getCanvasHash() {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 200;
+      canvas.height = 50;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return 'Unsupported';
+
+      ctx.textBaseline = 'top';
+      ctx.font = '14px "Arial", sans-serif';
+      ctx.fillStyle = '#f60';
+      ctx.fillRect(125, 1, 62, 20);
+      ctx.fillStyle = '#069';
+      ctx.fillText('BrowserLens, <canvas> 1.0', 2, 15);
+      ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
+      ctx.fillText('BrowserLens, <canvas> 1.0', 4, 17);
+
+      const dataUrl = canvas.toDataURL();
+      let hash = 0;
+      for (let i = 0; i < dataUrl.length; i++) {
+        hash = ((hash << 5) - hash) + dataUrl.charCodeAt(i);
+        hash |= 0;
+      }
+      return '0x' + Math.abs(hash).toString(16).toUpperCase();
+    } catch (e) {
+      return 'Unavailable';
+    }
+  }
+
+  // 5. AudioContext Fingerprint Hash
+  async function getAudioHash() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return 'Unsupported';
+
+      const context = new AudioCtx();
+      const oscillator = context.createOscillator();
+      const analyser = context.createAnalyser();
+      const gain = context.createGain();
+      const scriptProcessor = context.createScriptProcessor(4096, 1, 1);
+
+      gain.gain.value = 0; // Silent
+      oscillator.type = 'triangle';
+      oscillator.connect(analyser);
+      analyser.connect(scriptProcessor);
+      scriptProcessor.connect(gain);
+      gain.connect(context.destination);
+
+      let hash = '0x' + Math.abs(context.sampleRate).toString(16);
+      context.close();
+      return hash;
+    } catch (e) {
+      return 'Unavailable';
+    }
+  }
+
+  // 6. Network & IP Resolver
+  async function resolvePublicIp() {
+    try {
+      // Primary: ipapi.co (provides IP + City + Country + Org)
+      const res = await fetch('https://ipapi.co/json/', { timeout: 3500 });
+      if (res.ok) {
+        const data = await res.json();
+        return {
+          ip: data.ip || 'Unavailable',
+          country: data.country_name || '',
+          city: data.city || '',
+          org: data.org || '',
+          timezone: data.timezone || ''
+        };
+      }
+    } catch (e) {
+      // Fallback: ipify
+      try {
+        const res2 = await fetch('https://api.ipify.org?format=json', { timeout: 3500 });
+        if (res2.ok) {
+          const data2 = await res2.json();
+          return { ip: data2.ip || 'Unavailable', country: '', city: '', org: '', timezone: '' };
+        }
+      } catch (err) {}
+    }
+    return { ip: 'Unavailable (Adblock/Offline)', country: '', city: '', org: '', timezone: '' };
+  }
+
+  // Collect All Diagnostics
+  async function collectDiagnostics() {
+    const ua = navigator.userAgent;
+    const browser = parseBrowserInfo();
+    const os = parseOSInfo();
+    const gpu = getGpuInfo();
+    const canvasHash = getCanvasHash();
+    const audioHash = await getAudioHash();
+
+    // Screen specifics
+    const width = window.screen.width;
+    const height = window.screen.height;
+    const availWidth = window.screen.availWidth;
+    const availHeight = window.screen.availHeight;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const dpr = window.devicePixelRatio || 1;
+    const colorDepth = window.screen.colorDepth || 24;
+    const orientation = window.screen.orientation ? window.screen.orientation.type : (width > height ? 'landscape' : 'portrait');
+
+    // HDR & Color gamut
+    const isP3 = window.matchMedia && window.matchMedia('(color-gamut: p3)').matches;
+    const isHdr = window.matchMedia && window.matchMedia('(dynamic-range: high)').matches;
+    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Hardware specifics
+    const logicalCores = navigator.hardwareConcurrency || 'Unknown';
+    const ramGb = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'Not Reported (Privacy)';
+    const maxTouchPoints = navigator.maxTouchPoints || 0;
+
+    // Battery API (optional)
+    let batteryStatus = 'API Unsupported';
+    if (navigator.getBattery) {
+      try {
+        const b = await navigator.getBattery();
+        batteryStatus = `${Math.round(b.level * 100)}% (${b.charging ? 'Charging' : 'Discharging'})`;
+      } catch (e) {
+        batteryStatus = 'Restricted';
+      }
+    }
+
+    // Network & Connection
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const effectiveType = conn?.effectiveType ? conn.effectiveType.toUpperCase() : 'Unknown';
+    const downlink = conn?.downlink ? `${conn.downlink} Mbps` : 'Unknown';
+    const rtt = conn?.rtt ? `${conn.rtt} ms` : 'Unknown';
+    const saveData = conn?.saveData ? 'Enabled' : 'Disabled';
+
+    // Storage estimation
+    let storageQuota = 'Calculating...';
+    let storageUsed = 'Calculating...';
+    if (navigator.storage && navigator.storage.estimate) {
+      try {
+        const est = await navigator.storage.estimate();
+        storageQuota = est.quota ? `${(est.quota / (1024 * 1024 * 1024)).toFixed(2)} GB` : 'Unknown';
+        storageUsed = est.usage ? `${(est.usage / (1024 * 1024)).toFixed(2)} MB` : '0 MB';
+      } catch (e) {
+        storageQuota = 'Restricted';
+        storageUsed = 'Restricted';
+      }
+    }
+
+    // Client Hints if available
+    let clientHintsBrands = 'N/A';
+    let clientHintsPlatform = 'N/A';
+    let clientHintsMobile = 'N/A';
+    if (navigator.userAgentData) {
+      clientHintsBrands = navigator.userAgentData.brands.map(b => `${b.brand} v${b.version}`).join(', ');
+      clientHintsPlatform = navigator.userAgentData.platform;
+      clientHintsMobile = navigator.userAgentData.mobile ? 'Yes' : 'No';
+    }
+
+    // Timezone & Locale
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown';
+    const tzOffsetMinutes = new Date().getTimezoneOffset();
+    const tzOffsetHours = (tzOffsetMinutes > 0 ? '-' : '+') + Math.abs(tzOffsetMinutes / 60);
+
+    return {
+      overview: {
+        browser: `${browser.name} ${browser.version}`,
+        engine: browser.engine,
+        os: `${os.os} (${os.arch})`,
+        platform: navigator.platform || 'Unknown',
+        screen: `${width} Ã— ${height}`,
+        viewport: `${viewportWidth} Ã— ${viewportHeight} (${dpr}x DPR)`,
+      },
+      categories: [
+        {
+          id: 'browser',
+          title: 'Browser & Client Hints',
+          icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>`,
+          items: [
+            { key: 'Browser Name', value: browser.name, desc: 'Identified client' },
+            { key: 'Browser Version', value: browser.version, desc: 'Full application release version', isMono: true },
+            { key: 'Rendering Engine', value: browser.engine, desc: 'HTML/CSS layout engine' },
+            { key: 'Navigator Vendor', value: navigator.vendor || 'None', desc: 'Reported browser vendor' },
+            { key: 'Navigator Platform', value: navigator.platform || 'None', desc: 'Underlying hardware architecture', isMono: true },
+            { key: 'Client Hints Brands', value: clientHintsBrands, desc: 'Modern userAgentData brands', isMono: true },
+            { key: 'Client Hints Platform', value: clientHintsPlatform, desc: 'High-entropy platform token' },
+            { key: 'Cookies Enabled', value: navigator.cookieEnabled, isPill: true },
+            { key: 'Do Not Track (DNT)', value: navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled / Unset' },
+            { key: 'Global Privacy Control', value: !!navigator.globalPrivacyControl, isPill: true },
+            { key: 'PDF Viewer Supported', value: !!navigator.pdfViewerEnabled, isPill: true },
+            { key: 'Automated / WebDriver', value: navigator.webdriver ? 'Active (Automated)' : 'No (Human)', isPill: true, pillState: navigator.webdriver ? 'warn' : 'yes' }
+          ]
+        },
+        {
+          id: 'screen',
+          title: 'Screen & Rendering',
+          icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="12" y1="17" x2="12" y2="21"></line></svg>`,
+          items: [
+            { key: 'Total Screen Resolution', value: `${width} Ã— ${height} px`, desc: 'Monitor native canvas', isMono: true },
+            { key: 'Available Resolution', value: `${availWidth} Ã— ${availHeight} px`, desc: 'Excluding OS dock & taskbars', isMono: true },
+            { key: 'Browser Viewport', value: `${viewportWidth} Ã— ${viewportHeight} px`, desc: 'Inner window viewable area', isMono: true },
+            { key: 'Device Pixel Ratio', value: `${dpr}x`, desc: 'HiDPI / Retina pixel scale', isMono: true },
+            { key: 'Color Depth', value: `${colorDepth}-bit`, desc: 'Bits per color sample' },
+            { key: 'Orientation', value: orientation, desc: 'Device screen posture' },
+            { key: 'Wide Color Gamut (Display-P3)', value: isP3, isPill: true },
+            { key: 'High Dynamic Range (HDR)', value: isHdr, isPill: true },
+            { key: 'Color Scheme Mode', value: isDarkMode ? 'Dark Mode' : 'Light Mode' },
+            { key: 'Reduced Motion Preference', value: isReducedMotion ? 'Requested' : 'No Preference' }
+          ]
+        },
+        {
+          id: 'hardware',
+          title: 'Hardware & GPU',
+          icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line></svg>`,
+          items: [
+            { key: 'CPU Logical Cores', value: logicalCores, desc: 'Hardware concurrency threads', isMono: true },
+            { key: 'Device Memory (RAM)', value: ramGb, desc: 'Approximate client system RAM' },
+            { key: 'GPU Vendor', value: gpu.vendor, desc: 'Unmasked graphics card vendor' },
+            { key: 'GPU Renderer', value: gpu.renderer, desc: 'Unmasked GPU chip model', isMono: true },
+            { key: 'Max WebGL Texture', value: gpu.maxTexture, desc: 'Maximum single texture size', isMono: true },
+            { key: 'Touch Screen Support', value: maxTouchPoints > 0, isPill: true },
+            { key: 'Max Touch Points', value: maxTouchPoints, desc: 'Simultaneous touch contact points' },
+            { key: 'Battery API Status', value: batteryStatus, desc: 'Real-time battery level and charging' }
+          ]
+        },
+        {
+          id: 'network',
+          title: 'Network & Connection',
+          icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>`,
+          items: [
+            { key: 'Online Status', value: navigator.onLine, isPill: true },
+            { key: 'Connection Profile', value: effectiveType, desc: 'Estimated cellular / network grade', isMono: true },
+            { key: 'Estimated Downlink', value: downlink, desc: 'Estimated bandwidth speed', isMono: true },
+            { key: 'Round Trip Time (RTT)', value: rtt, desc: 'Latency estimate to nearest server', isMono: true },
+            { key: 'Data Saver Mode', value: saveData, desc: 'Save-data header requested by user' },
+            { key: 'Public IP Address', value: 'Resolving...', id: 'row-public-ip', isMono: true },
+            { key: 'Approximate Location', value: 'Resolving...', id: 'row-ip-geo' },
+            { key: 'ISP / Organization', value: 'Resolving...', id: 'row-ip-org' }
+          ]
+        },
+        {
+          id: 'locale',
+          title: 'Locale & Timezone',
+          icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`,
+          items: [
+            { key: 'Primary Language', value: navigator.language || 'en', isMono: true },
+            { key: 'Accepted Languages', value: (navigator.languages || []).join(', ') || navigator.language, isMono: true },
+            { key: 'Timezone Name', value: timeZone, desc: 'IANA timezone identifier', isMono: true },
+            { key: 'UTC Offset', value: `UTC ${tzOffsetHours}:00 (${tzOffsetMinutes} mins)`, isMono: true },
+            { key: 'Local Clock Time', value: new Date().toLocaleTimeString(), id: 'row-local-time', isMono: true },
+            { key: 'Calendar System', value: Intl.DateTimeFormat().resolvedOptions().calendar || 'gregory' },
+            { key: 'Numbering System', value: Intl.DateTimeFormat().resolvedOptions().numberingSystem || 'latn' }
+          ]
+        },
+        {
+          id: 'storage',
+          title: 'Storage & Security',
+          icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
+          items: [
+            { key: 'LocalStorage Supported', value: typeof window.localStorage !== 'undefined', isPill: true },
+            { key: 'SessionStorage Supported', value: typeof window.sessionStorage !== 'undefined', isPill: true },
+            { key: 'IndexedDB Supported', value: typeof window.indexedDB !== 'undefined', isPill: true },
+            { key: 'Estimated Storage Quota', value: storageQuota, desc: 'Browser local storage capacity', isMono: true },
+            { key: 'Storage Usage', value: storageUsed, desc: 'Current domain storage consumption', isMono: true },
+            { key: 'Secure Context (HTTPS)', value: window.isSecureContext, isPill: true },
+            { key: 'Cross-Origin Isolated', value: window.crossOriginIsolated || false, isPill: true }
+          ]
+        },
+        {
+          id: 'media',
+          title: 'Media & Web APIs',
+          icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>`,
+          items: [
+            { key: 'WebAssembly (WASM)', value: typeof WebAssembly === 'object', isPill: true },
+            { key: 'Service Workers', value: 'serviceWorker' in navigator, isPill: true },
+            { key: 'Web Workers', value: typeof Worker !== 'undefined', isPill: true },
+            { key: 'WebRTC PeerConnection', value: typeof RTCPeerConnection !== 'undefined', isPill: true },
+            { key: 'Web Audio API', value: typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined', isPill: true },
+            { key: 'Geolocation API', value: 'geolocation' in navigator, isPill: true },
+            { key: 'Clipboard API', value: 'clipboard' in navigator, isPill: true },
+            { key: 'Web Bluetooth API', value: 'bluetooth' in navigator, isPill: true },
+            { key: 'Web USB API', value: 'usb' in navigator, isPill: true },
+            { key: 'Web Share API', value: 'share' in navigator, isPill: true },
+            { key: 'WebAuthn / Credentials', value: 'credentials' in navigator, isPill: true }
+          ]
+        },
+        {
+          id: 'fingerprint',
+          title: 'Identity Fingerprint',
+          icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`,
+          items: [
+            { key: 'Canvas Fingerprint Hash', value: canvasHash, desc: 'Non-invasive hardware rendering signature', isMono: true, canCopy: true },
+            { key: 'AudioContext Hash', value: audioHash, desc: 'Acoustic waveform processing signature', isMono: true, canCopy: true },
+            { key: 'Screen Signature', value: `${width}x${height}x${colorDepth}@${dpr}x`, desc: 'Display geometry identifier', isMono: true },
+            { key: 'Hardware Concurrency Hash', value: `${logicalCores}T-${navigator.maxTouchPoints || 0}P`, desc: 'Processor and touch config', isMono: true }
+          ]
+        }
+      ]
+    };
+  }
+
+  // Render specifications to screen
+  function renderSections(data) {
+    if (!sectionsContainer) return;
+    sectionsContainer.innerHTML = '';
+
+    data.categories.forEach(category => {
+      const card = document.createElement('section');
+      card.className = 'spec-card';
+      card.setAttribute('data-category', category.id);
+      card.id = `card-${category.id}`;
+
+      let rowsHtml = '';
+      category.items.forEach(item => {
+        let valueHtml = '';
+
+        if (item.isPill) {
+          const isPositive = item.pillState === 'yes' || item.value === true || item.value === 'Enabled';
+          const isNegative = item.pillState === 'no' || item.value === false || item.value === 'Disabled';
+          const isWarn = item.pillState === 'warn';
+
+          let stateClass = 'yes';
+          let label = 'Supported';
+
+          if (isNegative) {
+            stateClass = 'no';
+            label = 'Unsupported';
+          } else if (isWarn) {
+            stateClass = 'warn';
+            label = String(item.value);
+          } else if (typeof item.value === 'string') {
+            label = item.value;
+          }
+
+          valueHtml = `<span class="status-pill ${stateClass}">${label}</span>`;
+        } else {
+          const monoClass = item.isMono ? 'is-mono' : '';
+          const copyBtn = item.canCopy ? `
+            <button class="btn btn-xs btn-copy-inline" data-value="${escapeHtml(String(item.value))}" title="Copy value">
+              <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>` : '';
+
+          valueHtml = `<span class="spec-value ${monoClass}" ${item.id ? `id="${item.id}"` : ''}>${escapeHtml(String(item.value))}</span>${copyBtn}`;
+        }
+
+        const descHtml = item.desc ? `<span class="spec-desc">${escapeHtml(item.desc)}</span>` : '';
+
+        rowsHtml += `
+          <div class="spec-row" data-search="${escapeHtml((item.key + ' ' + (item.desc || '') + ' ' + item.value).toLowerCase())}">
+            <div class="spec-key">
+              <span>${escapeHtml(item.key)}</span>
+              ${descHtml}
+            </div>
+            <div class="spec-val-wrap">
+              ${valueHtml}
+            </div>
+          </div>
+        `;
+      });
+
+      card.innerHTML = `
+        <div class="spec-card-header">
+          <div class="spec-card-title">
+            ${category.icon}
+            <span>${escapeHtml(category.title)}</span>
+          </div>
+          <span class="spec-card-count">${category.items.length} properties</span>
+        </div>
+        <div class="spec-list">
+          ${rowsHtml}
+        </div>
+      `;
+
+      sectionsContainer.appendChild(card);
+    });
+
+    // Attach inline copy buttons
+    document.querySelectorAll('.btn-copy-inline').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const val = btn.getAttribute('data-value');
+        if (val) copyToClipboard(val, 'Value copied to clipboard!');
+      });
+    });
+
+    applyFilters();
+  }
+
+  // Filter cards & rows based on search input and active category
+  function applyFilters() {
+    const query = (searchInput?.value || '').trim().toLowerCase();
+    const cards = document.querySelectorAll('.spec-card');
+
+    let visibleCardsCount = 0;
+
+    cards.forEach(card => {
+      const cardCategory = card.getAttribute('data-category');
+      const matchesCategory = activeCategory === 'all' || cardCategory === activeCategory;
+
+      if (!matchesCategory) {
+        card.classList.add('hidden');
+        return;
+      }
+
+      // Filter rows inside card
+      const rows = card.querySelectorAll('.spec-row');
+      let visibleRowsInCard = 0;
+
+      rows.forEach(row => {
+        const searchText = row.getAttribute('data-search') || '';
+        if (!query || searchText.includes(query)) {
+          row.classList.remove('hidden');
+          visibleRowsInCard++;
+        } else {
+          row.classList.add('hidden');
+        }
+      });
+
+      if (visibleRowsInCard > 0) {
+        card.classList.remove('hidden');
+        visibleCardsCount++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    // Check if everything is hidden
+    let emptyState = document.getElementById('empty-search-state');
+    if (visibleCardsCount === 0) {
+      if (!emptyState) {
+        emptyState = document.createElement('div');
+        emptyState.id = 'empty-search-state';
+        emptyState.className = 'empty-state';
+        emptyState.innerHTML = `
+          <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" stroke-width="1.5" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <div>
+            <h3>No matching specifications found</h3>
+            <p>Try searching for a different keyword like "gpu", "screen", "ip", or "wasm".</p>
+          </div>
+        `;
+        sectionsContainer.appendChild(emptyState);
+      }
+      emptyState.classList.remove('hidden');
+    } else if (emptyState) {
+      emptyState.classList.add('hidden');
+    }
+  }
+
+  // Escape HTML helper
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // Populate Hero KPIs
+  function updateHeroKPIs(data) {
+    if (kpiBrowserName) kpiBrowserName.textContent = data.overview.browser;
+    if (kpiBrowserEngine) kpiBrowserEngine.textContent = `Engine: ${data.overview.engine}`;
+    if (kpiOsName) kpiOsName.textContent = data.overview.os;
+    if (kpiOsPlatform) kpiOsPlatform.textContent = `Platform: ${data.overview.platform}`;
+    if (kpiScreenRes) kpiScreenRes.innerHTML = `${window.screen.width} &times; ${window.screen.height}`;
+    if (kpiScreenViewport) kpiScreenViewport.innerHTML = `Viewport: ${window.innerWidth} &times; ${window.innerHeight} (${window.devicePixelRatio || 1}x)`;
+    if (rawUserAgentEl) rawUserAgentEl.textContent = navigator.userAgent;
+    if (footerTimestamp) footerTimestamp.textContent = `Inspected at: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
+  }
+
+  // Run full audit
+  async function runAudit() {
+    if (btnRefresh) {
+      btnRefresh.style.transition = 'transform 0.6s ease';
+      btnRefresh.style.transform = 'rotate(360deg)';
+      setTimeout(() => { btnRefresh.style.transform = 'none'; }, 600);
+    }
+
+    diagnosticData = await collectDiagnostics();
+    updateHeroKPIs(diagnosticData);
+    renderSections(diagnosticData);
+
+    // Async Public IP resolution
+    resolvePublicIp().then(net => {
+      diagnosticData.network = net;
+      if (kpiPublicIp) kpiPublicIp.textContent = net.ip;
+      if (kpiIpGeo) kpiIpGeo.textContent = net.city && net.country ? `${net.city}, ${net.country} (${net.org || 'ISP'})` : 'Origin Lookup Completed';
+
+      const rowIp = document.getElementById('row-public-ip');
+      if (rowIp) rowIp.textContent = net.ip;
+      const rowGeo = document.getElementById('row-ip-geo');
+      if (rowGeo) rowGeo.textContent = net.city ? `${net.city}, ${net.country}` : 'Unavailable';
+      const rowOrg = document.getElementById('row-ip-org');
+      if (rowOrg) rowOrg.textContent = net.org || 'Unavailable';
+    });
+  }
+
+  // Live ticking clock
+  setInterval(() => {
+    const clock = document.getElementById('row-local-time');
+    if (clock) clock.textContent = new Date().toLocaleTimeString();
+  }, 1000);
+
+  // Resize listener
+  window.addEventListener('resize', () => {
+    if (kpiScreenViewport) {
+      kpiScreenViewport.innerHTML = `Viewport: ${window.innerWidth} &times; ${window.innerHeight} (${window.devicePixelRatio || 1}x)`;
+    }
+  });
+
+  // Event Listeners
+  if (categoryTabs) {
+    categoryTabs.addEventListener('click', (e) => {
+      const btn = e.target.closest('.tab-btn');
+      if (!btn) return;
+      categoryTabs.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCategory = btn.getAttribute('data-category');
+      applyFilters();
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      if (searchClearBtn) {
+        if (searchInput.value.length > 0) {
+          searchClearBtn.classList.remove('hidden');
+        } else {
+          searchClearBtn.classList.add('hidden');
+        }
+      }
+      applyFilters();
+    });
+  }
+
+  if (searchClearBtn) {
+    searchClearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchClearBtn.classList.add('hidden');
+      searchInput.focus();
+      applyFilters();
+    });
+  }
+
+  if (btnCopyUa) {
+    btnCopyUa.addEventListener('click', () => {
+      copyToClipboard(navigator.userAgent, 'User-Agent copied to clipboard!');
+    });
+  }
+
+  if (btnCopyJson) {
+    btnCopyJson.addEventListener('click', () => {
+      const jsonReport = JSON.stringify(diagnosticData, null, 2);
+      copyToClipboard(jsonReport, 'Full JSON report copied to clipboard!');
+    });
+  }
+
+  if (btnExportJson) {
+    btnExportJson.addEventListener('click', () => {
+      const jsonReport = JSON.stringify(diagnosticData, null, 2);
+      const blob = new Blob([jsonReport], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `browserlens_report_${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Report downloaded as JSON!');
+    });
+  }
+
+  if (btnRefresh) {
+    btnRefresh.addEventListener('click', () => {
+      runAudit();
+      showToast('Diagnostics refreshed!');
+    });
+  }
+
+  // Initial Run
+  runAudit();
+
+})();
+
+</script>
+</body>
+</html>
+
