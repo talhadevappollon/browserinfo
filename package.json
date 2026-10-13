@@ -1,0 +1,15 @@
+{
+  "name": "browserinfo",
+  "version": "1.0.0",
+  "description": "BrowserLens - Client & Browser Inspector - Comprehensive real-time browser, hardware, network, and client environment diagnostic tool",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"No tests specified\""
+  },
+  "keywords": ["browser", "diagnostics", "analytics"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}
